@@ -1,0 +1,143 @@
+<html>
+  <head>
+    <title>EuterPong</title>
+    <meta name="viewport" content="width=device-width, user-scalable=0" />
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <style>
+      #ball {
+        width:20px;
+        height:20px;
+        border-radius:10px;
+        background:red;
+        position:absolute;
+        top:0px;
+        left:10px;
+      }
+
+      #game_box {
+        height:90%;
+        width:100%;
+        border:1px solid black;
+        position:relative;
+      }
+      
+      .player {
+        width:10px;
+        height:70px;
+        background:blue;
+        position:absolute;
+      }
+      #player1 {
+        left:0px;
+        top:110px;
+        border-top-right-radius:9px 35px;
+        border-bottom-right-radius:9px 35px;
+      }
+      #player2 {
+        right:0px;
+        top:110px;
+        border-top-left-radius:9px 35px;
+        border-bottom-left-radius:9px 35px;
+      }
+
+      input {
+        position:absolute;
+        top:150px;
+        border:none;
+        
+      }
+    </style>
+    <script type="text/javascript" >
+    var keys = {};
+
+    $(document).keydown(function (e) {
+        keys[e.which] = true;
+    });
+
+    $(document).keyup(function (e) {
+        delete keys[e.which];  
+    });
+
+    key_action();
+
+    function key_action() {
+      for (var i in keys) {
+        if (i == 83) {
+          move_player(1,"up")
+        }
+        if (i == 87) {
+          move_player(1,"down")
+        }
+        if (i == 40) {
+          move_player(2,"up")
+        }
+        if (i == 38) {
+          move_player(2,"down")
+        }
+      }
+      setTimeout("key_action()",10);
+    }
+
+    function move_player(player,direction){
+      var value = 2;
+      if(direction == "up"){
+        $('#player'+player).css("top", parseInt($('#player'+player).css("top"))+value);
+      }else{
+        $('#player'+player).css("top", parseInt($('#player'+player).css("top"))-value);
+      }
+    }
+
+  	function move(x,y) {
+  		var timeout_time = 5;
+      var ball_size = 20;
+      var player1_width = parseInt($('#player1').css("width"));
+      var player2_width = parseInt($('#player2').css("width"));
+
+      var player1_height = parseInt($('#player1').css("height"));
+      var player2_height = parseInt($('#player2').css("height"));
+
+      var box_height = parseInt($('#game_box').css("height"));
+      var box_width = parseInt($('#game_box').css("width"));
+
+      var player1_top = parseInt($('#player1').css("top"));
+      var player2_top = parseInt($('#player2').css("top"));
+
+      $('#ball').css("top", (parseInt($('#ball').css("top"))+y));
+  		$('#ball').css("left", (parseInt($('#ball').css("left"))+x));
+
+      var ball_pos_left = parseInt($('#ball').css("left"));
+      var ball_pos_top = parseInt($('#ball').css("top"));
+
+      // bottom
+  		if (ball_pos_top+ball_size > box_height) {
+        setTimeout("move("+x+","+(-1*y)+")",timeout_time);
+  		// top
+      } else if((ball_pos_top < 0)) {
+  			setTimeout("move("+x+","+(-1*y)+")",timeout_time);
+  		// right
+      } else if((ball_pos_left+ball_size > box_width-player2_width)) {
+  			if(ball_pos_top+(ball_size/2) < player2_top || ball_pos_top+(ball_size/2) > player2_top+player2_height){  
+          alert("verloren");
+        }
+        setTimeout("move("+(-1*x)+","+y+")",timeout_time);		
+      // left
+      } else if((ball_pos_left < player1_width)) {
+  			if(ball_pos_top+(ball_size/2) < player1_top || ball_pos_top+(ball_size/2) > player1_top+player1_height){
+          alert("verloren");
+        }
+        setTimeout("move("+(-1*x)+","+y+")",timeout_time);
+      } else {
+  			setTimeout("move("+x+","+y+")",timeout_time);
+  		}
+  	}
+    </script>
+  </head>
+  <body>
+    <div id="game_box">
+      <div id="ball" ></div>
+      <div id="player1" class="player" ></div>
+      <div id="player2" class="player" ></div>
+    </div>
+    <button onclick="move(1,1);">Play</button>
+  </body>
+</html>
